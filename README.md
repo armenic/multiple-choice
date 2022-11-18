@@ -1,8 +1,7 @@
 # Random choice command line game
 
+- Game expects a file tests.txt in the current directory
+
 ## TODO
 
-- End the game when all questions are asked
-- Do not ask the same question
-- Get questions from a file
--
+- compile
