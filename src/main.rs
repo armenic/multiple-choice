@@ -18,10 +18,10 @@ fn main() {
         println!("\nYour answer was {}", guessed_option);
         let guessed_correctly = guessed_option == correct_entry.1;
         if guessed_correctly {
-            println!("That's correct, keep it up!")
+            println!("✅ That's correct, keep it up!\n")
         } else {
-            println!("Sorry, that's not correct. Keep practicing!");
-            println!("Correct answer was {}", correct_entry.1);
+            println!("⚠ Sorry, that's not correct. Keep practicing!");
+            println!("Correct answer was {}\n", correct_entry.1);
         }
     }
 }
@@ -59,7 +59,7 @@ fn get_user_input() -> String {
 
 fn make_question(correct_entry: &(&str, &str), wrong_options_new: &Vec<String>) -> String {
     format!(
-        "What is the translation of\n\n{}\n\n{}{}",
+        "Find the match of\n\n{}\n\n{}{}",
         String::from(correct_entry.0),
         wrong_options_new.join("\n"),
         "\n\nPlease enter the corresponding number, between 0 and 3\n",
@@ -69,32 +69,16 @@ fn make_question(correct_entry: &(&str, &str), wrong_options_new: &Vec<String>) 
 fn randomize() -> ((&'static str, &'static str), Vec<String>) {
     let mut rng = rand::thread_rng();
     let correct_index = rng.gen_range(0..DICTIONARY.len());
-    let mut wrong_indexes;
-    loop {
-        wrong_indexes = seq::index::sample(&mut rng, DICTIONARY.len(), 3).into_vec();
-        if !wrong_indexes.contains(&correct_index) {
-            break;
-        }
-    }
+    let shuffled_indexes = seq::index::sample(&mut rng, DICTIONARY.len(), 4).into_vec();
 
     let correct_entry = DICTIONARY[correct_index];
 
-    let wrong_entries = wrong_indexes
-        .iter()
-        .map(|i| DICTIONARY[*i])
-        .collect::<Vec<_>>();
-
-    let mut wrong_options = wrong_entries.iter().map(|i| i.1).collect::<Vec<_>>();
-    wrong_options.push(correct_entry.1);
-
-    let wrong_options_indexes =
-        seq::index::sample(&mut rng, wrong_options.len(), wrong_options.len()).into_vec();
-
-    let wrong_options_new = wrong_options_indexes
+    let shuffled_options = shuffled_indexes
         .iter()
         .enumerate()
-        .map(|(i, it)| i.to_string() + ") " + wrong_options[*it])
+        // 1) բառ բ
+        .map(|(i, ii)| i.to_string() + ") " + DICTIONARY[*ii].1)
         .collect::<Vec<_>>();
 
-    (correct_entry, wrong_options_new)
+    (correct_entry, shuffled_options)
 }
