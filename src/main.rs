@@ -10,7 +10,8 @@ static DICTIONARY: [(&str, &str); 4] = [
 
 fn main() {
     loop {
-        let (correct_entry, wrong_options) = randomize();
+        let (correct_index, wrong_options) = randomize();
+        let correct_entry = DICTIONARY[correct_index];
 
         let guess_num = loop_for_user_answer(&correct_entry, &wrong_options);
 
@@ -66,12 +67,10 @@ fn make_question(correct_entry: &(&str, &str), wrong_options_new: &Vec<String>) 
     )
 }
 
-fn randomize() -> ((&'static str, &'static str), Vec<String>) {
+fn randomize() -> (usize, Vec<String>) {
     let mut rng = rand::thread_rng();
     let correct_index = rng.gen_range(0..DICTIONARY.len());
     let shuffled_indexes = seq::index::sample(&mut rng, DICTIONARY.len(), 4).into_vec();
-
-    let correct_entry = DICTIONARY[correct_index];
 
     let shuffled_options = shuffled_indexes
         .iter()
@@ -80,5 +79,5 @@ fn randomize() -> ((&'static str, &'static str), Vec<String>) {
         .map(|(i, ii)| i.to_string() + ") " + DICTIONARY[*ii].1)
         .collect::<Vec<_>>();
 
-    (correct_entry, shuffled_options)
+    (correct_index, shuffled_options)
 }
