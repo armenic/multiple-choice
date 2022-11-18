@@ -9,13 +9,24 @@ static DICTIONARY: [(&str, &str); 4] = [
 ];
 
 fn main() {
+    let mut used_indexes = Vec::new();
     loop {
-        let (correct_index, wrong_options) = randomize();
+        let (correct_index, shuffled_options) = randomize();
+
+        if used_indexes.len() == DICTIONARY.len() {
+            println!("Game over\n");
+            return;
+        }
+        if used_indexes.contains(&correct_index) {
+            continue;
+        }
+        used_indexes.push(correct_index);
+
         let correct_entry = DICTIONARY[correct_index];
 
-        let guess_num = loop_for_user_answer(&correct_entry, &wrong_options);
+        let guess_num = loop_for_user_answer(&correct_entry, &shuffled_options);
 
-        let guessed_option = &wrong_options[guess_num][3..];
+        let guessed_option = &shuffled_options[guess_num][3..];
         println!("\nYour answer was {}", guessed_option);
         let guessed_correctly = guessed_option == correct_entry.1;
         if guessed_correctly {
@@ -27,11 +38,11 @@ fn main() {
     }
 }
 
-fn loop_for_user_answer(correct_entry: &(&str, &str), wrong_options: &Vec<String>) -> usize {
+fn loop_for_user_answer(correct_entry: &(&str, &str), shuffled_options: &Vec<String>) -> usize {
     let guess_num: usize;
 
     loop {
-        println!("{}", make_question(correct_entry, wrong_options));
+        println!("{}", make_question(correct_entry, shuffled_options));
 
         let guess = get_user_input();
 
@@ -58,11 +69,11 @@ fn get_user_input() -> String {
     guess
 }
 
-fn make_question(correct_entry: &(&str, &str), wrong_options_new: &Vec<String>) -> String {
+fn make_question(correct_entry: &(&str, &str), shuffled_options: &Vec<String>) -> String {
     format!(
         "Find the match of\n\n{}\n\n{}{}",
         String::from(correct_entry.0),
-        wrong_options_new.join("\n"),
+        shuffled_options.join("\n"),
         "\n\nPlease enter the corresponding number, between 0 and 3\n",
     )
 }
