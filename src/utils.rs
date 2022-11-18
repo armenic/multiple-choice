@@ -2,7 +2,7 @@ use rand::{seq, Rng};
 use std::io;
 
 fn loop_for_user_answer(
-    correct_entry: &Vec<&str>,
+    correct_entry: &Vec<String>,
     shuffled_options: &Vec<String>,
     q_n: usize,
 ) -> usize {
@@ -26,11 +26,15 @@ fn loop_for_user_answer(
     }
 }
 
-fn make_question(correct_entry: &Vec<&str>, shuffled_options: &Vec<String>, q_n: usize) -> String {
+fn make_question(
+    correct_entry: &Vec<String>,
+    shuffled_options: &Vec<String>,
+    q_n: usize,
+) -> String {
     format!(
         "Question {}, find the match of\n\n{}\n\n{}{}",
         q_n.to_string(),
-        String::from(correct_entry[0]),
+        correct_entry[0],
         shuffled_options.join("\n"),
         "\n\nPlease enter the corresponding number, between 0 and 3\n",
     )
@@ -46,7 +50,7 @@ fn get_user_input() -> String {
     guess
 }
 
-fn randomize(data: &Vec<Vec<&str>>) -> (usize, Vec<String>) {
+fn randomize(data: &Vec<Vec<String>>) -> (usize, Vec<String>) {
     let mut rng = rand::thread_rng();
     let correct_index = rng.gen_range(0..data.len());
     let shuffled_indexes = seq::index::sample(&mut rng, data.len(), 4).into_vec();
@@ -55,13 +59,13 @@ fn randomize(data: &Vec<Vec<&str>>) -> (usize, Vec<String>) {
         .iter()
         .enumerate()
         // 1) բառ բ
-        .map(|(i, ii)| i.to_string() + ") " + data[*ii][1])
+        .map(|(i, ii)| i.to_string() + ") " + &data[*ii][1])
         .collect::<Vec<_>>();
 
     (correct_index, shuffled_options)
 }
 
-pub fn do_multiple_choice(data: Vec<Vec<&str>>) {
+pub fn do_multiple_choice(data: Vec<Vec<String>>) {
     let mut used_indexes = Vec::new();
     loop {
         let (correct_index, shuffled_options) = randomize(&data);
