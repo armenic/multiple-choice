@@ -24,7 +24,7 @@ fn main() {
 
         let correct_entry = DICTIONARY[correct_index];
 
-        let guess_num = loop_for_user_answer(&correct_entry, &shuffled_options);
+        let guess_num = loop_for_user_answer(&correct_entry, &shuffled_options, used_indexes.len());
 
         let guessed_option = &shuffled_options[guess_num][3..];
         println!("\nYour answer was {}", guessed_option);
@@ -38,11 +38,15 @@ fn main() {
     }
 }
 
-fn loop_for_user_answer(correct_entry: &(&str, &str), shuffled_options: &Vec<String>) -> usize {
+fn loop_for_user_answer(
+    correct_entry: &(&str, &str),
+    shuffled_options: &Vec<String>,
+    q_n: usize,
+) -> usize {
     let guess_num: usize;
 
     loop {
-        println!("{}", make_question(correct_entry, shuffled_options));
+        println!("{}", make_question(correct_entry, shuffled_options, q_n));
 
         let guess = get_user_input();
 
@@ -69,9 +73,14 @@ fn get_user_input() -> String {
     guess
 }
 
-fn make_question(correct_entry: &(&str, &str), shuffled_options: &Vec<String>) -> String {
+fn make_question(
+    correct_entry: &(&str, &str),
+    shuffled_options: &Vec<String>,
+    q_n: usize,
+) -> String {
     format!(
-        "Find the match of\n\n{}\n\n{}{}",
+        "Question {}, find the match of\n\n{}\n\n{}{}",
+        q_n.to_string(),
         String::from(correct_entry.0),
         shuffled_options.join("\n"),
         "\n\nPlease enter the corresponding number, between 0 and 3\n",
