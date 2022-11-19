@@ -73,11 +73,13 @@ fn randomize(data: &Vec<Vec<String>>) -> (usize, Vec<String>) {
 
 pub fn do_multiple_choice(data: Vec<Vec<String>>) {
     let mut used_indexes = Vec::new();
+    let mut score = 0;
     loop {
         let (correct_index, shuffled_options) = randomize(&data);
 
         if used_indexes.len() == data.len() {
-            println!("Game over\n");
+            println!("Game over");
+            println!("Score was {} out of {}", score, data.len());
             return;
         }
         if used_indexes.contains(&correct_index) {
@@ -98,7 +100,8 @@ pub fn do_multiple_choice(data: Vec<Vec<String>>) {
         println!("\nYour answer was {}", guessed_option);
         let guessed_correctly = guessed_option == correct_entry[1];
         if guessed_correctly {
-            println!("✅ That's correct, keep it up!\n")
+            println!("✅ That's correct, keep it up!\n");
+            score += 1
         } else {
             println!("⚠ Sorry, that's not correct. Keep practicing!");
             println!("Correct answer was {}\n", correct_entry[1]);

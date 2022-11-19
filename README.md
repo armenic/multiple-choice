@@ -14,7 +14,6 @@ str b | բառ բ
 
 ## TODO
 
-- announce final score
-- switch to 1 based indexing for shuffled options
+- use 1 based indexing for shuffled options
 - compile into executable for easy distribution
 -
