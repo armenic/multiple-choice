@@ -19,7 +19,7 @@ fn loop_for_user_answer(
 
         match guess.trim().parse() {
             Ok(num) => {
-                if num > 3 {
+                if num < 1 || num > 4 {
                     continue;
                 }
                 guess_num = num;
@@ -42,7 +42,7 @@ fn make_question(
         d_l.to_string(),
         correct_entry[0],
         shuffled_options.join("\n"),
-        "\n\nPlease enter the corresponding number, between 0 and 3\n",
+        "\n\nPlease enter the corresponding number, between 1 and 4\n",
     )
 }
 
@@ -65,7 +65,8 @@ fn randomize(data: &Vec<Vec<String>>) -> (usize, Vec<String>) {
         .iter()
         .enumerate()
         // 1) բառ բ
-        .map(|(i, ii)| i.to_string() + ") " + &data[*ii][1])
+        // We show 1 based index
+        .map(|(i, ii)| (i + 1).to_string() + ") " + &data[*ii][1])
         .collect::<Vec<_>>();
 
     (correct_index, shuffled_options)
@@ -96,7 +97,8 @@ pub fn do_multiple_choice(data: Vec<Vec<String>>) {
             data.len(),
         );
 
-        let guessed_option = &shuffled_options[guess_num][3..];
+        // We are showing 1 based index, hence need to subtract 1
+        let guessed_option = &shuffled_options[guess_num - 1][3..];
         println!("\nYour answer was {}", guessed_option);
         let guessed_correctly = guessed_option == correct_entry[1];
         if guessed_correctly {
