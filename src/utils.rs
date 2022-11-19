@@ -1,15 +1,19 @@
 use rand::{seq, Rng};
-use std::io;
+use std::{fs, io};
 
 fn loop_for_user_answer(
     correct_entry: &Vec<String>,
     shuffled_options: &Vec<String>,
     q_n: usize,
+    d_l: usize,
 ) -> usize {
     let guess_num: usize;
 
     loop {
-        println!("{}", make_question(correct_entry, shuffled_options, q_n));
+        println!(
+            "{}",
+            make_question(correct_entry, shuffled_options, q_n, d_l)
+        );
 
         let guess = get_user_input();
 
@@ -30,10 +34,12 @@ fn make_question(
     correct_entry: &Vec<String>,
     shuffled_options: &Vec<String>,
     q_n: usize,
+    d_l: usize,
 ) -> String {
     format!(
-        "Question {}, find the match of\n\n{}\n\n{}{}",
+        "Question {} out of {}, find the match of\n\n{}\n\n{}{}",
         q_n.to_string(),
+        d_l.to_string(),
         correct_entry[0],
         shuffled_options.join("\n"),
         "\n\nPlease enter the corresponding number, between 0 and 3\n",
@@ -81,7 +87,12 @@ pub fn do_multiple_choice(data: Vec<Vec<String>>) {
 
         let correct_entry = &data[correct_index];
 
-        let guess_num = loop_for_user_answer(&correct_entry, &shuffled_options, used_indexes.len());
+        let guess_num = loop_for_user_answer(
+            &correct_entry,
+            &shuffled_options,
+            used_indexes.len(),
+            data.len(),
+        );
 
         let guessed_option = &shuffled_options[guess_num][3..];
         println!("\nYour answer was {}", guessed_option);
@@ -93,4 +104,22 @@ pub fn do_multiple_choice(data: Vec<Vec<String>>) {
             println!("Correct answer was {}\n", correct_entry[1]);
         }
     }
+}
+
+pub fn read_tests() -> Vec<Vec<String>> {
+    let contents = fs::read_to_string("tests.txt")
+        .expect("There must be tests.txt file in the current directory");
+    let split_contents = contents
+        .split("\n")
+        .filter(|s| s.trim().to_string() != "")
+        .collect::<Vec<_>>();
+    let data = split_contents
+        .iter()
+        .map(|i| {
+            i.split("|")
+                .map(|s| s.trim().to_string())
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
+    data
 }
