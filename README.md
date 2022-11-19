@@ -14,6 +14,5 @@ str b | բառ բ
 
 ## TODO
 
-- use 1 based indexing for shuffled options
 - compile into executable for easy distribution
 -
