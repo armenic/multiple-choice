@@ -2,3 +2,5 @@ str a | բառ ա
 str b | բառ բ
 str g | բառ գ
 str d | բառ դ
+str e | բառ ե
+str z | բառ զ

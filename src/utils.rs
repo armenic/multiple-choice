@@ -1,3 +1,4 @@
+use rand::seq::SliceRandom;
 use rand::{seq, Rng};
 use std::{fs, io};
 
@@ -59,7 +60,18 @@ fn get_user_input() -> String {
 fn randomize(data: &Vec<Vec<String>>) -> (usize, Vec<String>) {
     let mut rng = rand::thread_rng();
     let correct_index = rng.gen_range(0..data.len());
-    let shuffled_indexes = seq::index::sample(&mut rng, data.len(), 4).into_vec();
+    let mut shuffled_indexes;
+    loop {
+        shuffled_indexes = seq::index::sample(&mut rng, data.len(), 3).into_vec();
+        if !shuffled_indexes.contains(&correct_index) {
+            shuffled_indexes.push(correct_index);
+            shuffled_indexes = shuffled_indexes
+                .choose_multiple(&mut rng, 4)
+                .cloned()
+                .collect();
+            break;
+        }
+    }
 
     let shuffled_options = shuffled_indexes
         .iter()

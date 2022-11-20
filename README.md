@@ -15,4 +15,6 @@ str b | բառ բ
 ## TODO
 
 - compile into executable for easy distribution
+- tests
+- asserts
 -
