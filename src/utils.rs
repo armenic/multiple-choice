@@ -7,13 +7,14 @@ fn loop_for_user_answer(
     shuffled_options: &Vec<String>,
     q_n: usize,
     d_l: usize,
+    language_choice: usize,
 ) -> usize {
     let guess_num: usize;
 
     loop {
         println!(
             "{}",
-            make_question(correct_entry, shuffled_options, q_n, d_l)
+            make_question(correct_entry, shuffled_options, q_n, d_l, language_choice)
         );
 
         let guess = get_user_input();
@@ -36,12 +37,13 @@ fn make_question(
     shuffled_options: &Vec<String>,
     q_n: usize,
     d_l: usize,
+    language_choice: usize,
 ) -> String {
     format!(
         "Question {} out of {}, find the match of\n\n{}\n\n{}{}",
         q_n.to_string(),
         d_l.to_string(),
-        correct_entry[0],
+        correct_entry[language_choice.abs_diff(1)],
         shuffled_options.join("\n"),
         "\n\nPlease enter the corresponding number, between 1 and 4\n",
     )
@@ -57,9 +59,10 @@ fn get_user_input() -> String {
     guess
 }
 
-fn randomize(data: &Vec<Vec<String>>) -> (usize, Vec<String>) {
+fn randomize(data: &Vec<Vec<String>>) -> (usize, Vec<String>, usize) {
     let mut rng = rand::thread_rng();
     let correct_index = rng.gen_range(0..data.len());
+    let language_choice = [0, 1].choose(&mut rng).unwrap();
     let mut shuffled_indexes;
     loop {
         shuffled_indexes = seq::index::sample(&mut rng, data.len(), 3).into_vec();
@@ -78,17 +81,17 @@ fn randomize(data: &Vec<Vec<String>>) -> (usize, Vec<String>) {
         .enumerate()
         // 1) բառ բ
         // We show 1 based index
-        .map(|(i, ii)| (i + 1).to_string() + ") " + &data[*ii][1])
+        .map(|(i, ii)| (i + 1).to_string() + ") " + &data[*ii][*language_choice])
         .collect::<Vec<_>>();
 
-    (correct_index, shuffled_options)
+    (correct_index, shuffled_options, *language_choice)
 }
 
 pub fn do_multiple_choice(data: Vec<Vec<String>>) {
     let mut used_indexes = Vec::new();
     let mut score = 0;
     loop {
-        let (correct_index, shuffled_options) = randomize(&data);
+        let (correct_index, shuffled_options, language_choice) = randomize(&data);
 
         if used_indexes.len() == data.len() {
             println!("Game over");
@@ -107,12 +110,13 @@ pub fn do_multiple_choice(data: Vec<Vec<String>>) {
             &shuffled_options,
             used_indexes.len(),
             data.len(),
+            language_choice,
         );
 
         // We are showing 1 based index, hence need to subtract 1
         let guessed_option = &shuffled_options[guess_num - 1][3..];
         println!("\nYour answer was {}", guessed_option);
-        let guessed_correctly = guessed_option == correct_entry[1];
+        let guessed_correctly = guessed_option == correct_entry[language_choice];
         if guessed_correctly {
             println!("✅ That's correct, keep it up!\n");
             score += 1
