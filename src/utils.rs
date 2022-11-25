@@ -130,10 +130,7 @@ pub fn do_multiple_choice(data: Vec<Vec<String>>) {
 pub fn read_tests() -> Vec<Vec<String>> {
     let contents = fs::read_to_string("tests.txt")
         .expect("There must be tests.txt file in the current directory");
-    let split_contents = contents
-        .split("\n")
-        .filter(|s| s.trim().to_string() != "")
-        .collect::<Vec<_>>();
+    let split_contents = contents.lines().collect::<Vec<_>>();
     let data = split_contents
         .iter()
         .map(|i| {
